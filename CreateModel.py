@@ -164,7 +164,6 @@ building_origin = model.createIfcAxis2Placement3D(
     model.createIfcDirection((0.0, 0.0, 1.0)),
     model.createIfcDirection((1.0, 0.0, 0.0)))
 building_placement = model.createIfcLocalPlacement(
-    #PlacementRelTo=site_placement,
     RelativePlacement=building_origin)
 building = model.createIfcBuilding(
     GlobalId=ifcGuid.new(),
@@ -190,7 +189,6 @@ for new_storey in storey_list:
     model.createIfcDirection((0.0, 0.0, 1.0)),
     model.createIfcDirection((1.0, 0.0, 0.0)))
     storey_placement = model.createIfcLocalPlacement(
-        #PlacementRelTo=building_placement,
         RelativePlacement=storey_origin)
     storey = model.createIfcBuildingStorey(
         GlobalId=ifcGuid.new(),
