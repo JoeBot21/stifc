@@ -17,18 +17,18 @@ project = ifcRoot.create_entity(
 # Add units
 ## Create the required SI units
 SI_units = {
+    "AREAUNIT": "SQUARE_METRE",
+    "ENERGYUNIT": "JOULE",
+    "FORCEUNIT": "NEWTON",
+    "FREQUENCYUNIT": "HERTZ",
     "LENGTHUNIT": "METRE",
     "MASSUNIT": "GRAM",
-    "TIMEUNIT": "SECOND",
-    "THERMODYNAMICTEMPERATUREUNIT": "KELVIN",
     "PLANEANGLEUNIT": "RADIAN",
-    "SOLIDANGLEUNIT": "STERADIAN",
-    "FREQUENCYUNIT": "HERTZ",
-    "FORCEUNIT": "NEWTON",
-    "ENERGYUNIT": "JOULE",
     "POWERUNIT": "WATT",
     "PRESSUREUNIT": "PASCAL",
-    "AREAUNIT": "SQUARE_METRE",
+    "SOLIDANGLEUNIT": "STERADIAN",
+    "THERMODYNAMICTEMPERATUREUNIT": "KELVIN",
+    "TIMEUNIT": "SECOND",
     "VOLUMEUNIT": "CUBIC_METRE"
 }
 
@@ -60,10 +60,11 @@ for unit_type in unit_type_exponents.keys():
 conversion_unit_list = [
     ("INCH", "LENGTHUNIT", 0.0254),
     ("FT", "LENGTHUNIT", 0.3048),
-    ("SQ_IN", "AREAUNIT", 0.0006452),
-    ("SQ_FT", "AREAUNIT", 0.09290304),
-    ("CU_IN", "VOLUMEUNIT", 0.00001639),
-    ("CU_FT", "VOLUMEUNIT", 0.02831684671168849),
+    ("INCH^2", "AREAUNIT", 0.0006452),
+    ("FT^2", "AREAUNIT", 0.09290304),
+    ("INCH^3", "VOLUMEUNIT", 0.00001639),
+    ("FT^3", "VOLUMEUNIT", 0.02831684671168849),
+    ("LBMASS", "MASSUNIT", 454),
     ("LB", "FORCEUNIT", 4.4482216153),
     ("KIP", "FORCEUNIT", 4448.2216153),
     ("PSI", "PRESSUREUNIT", 6894.7572932),
@@ -75,13 +76,13 @@ conversion_unit_list = [
 for new_unit in conversion_unit_list:
     metric_unit = ifc_unit[SI_units[new_unit[1]]]
     conversion_value = model.create_entity(
-        "IfcReal",
+        "Ifc"+new_unit[1][0:-4]+"Measure",
         wrappedValue=new_unit[2])
     conversion = model.createIfcMeasureWithUnit(
         conversion_value,
         metric_unit)
     unit = model.createIfcConversionBasedUnit(
-        Dimensions=ifc_unit_exponents[unit_type],
+        Dimensions=ifc_unit_exponents[new_unit[1]],
         UnitType=new_unit[1],
         Name=new_unit[0],
         ConversionFactor=conversion)
@@ -93,10 +94,22 @@ derived_unit_list = [
     ("PLF", "LINEARFORCEUNIT", (("LB", 1), ("FT", -1))),
     ("KLI", "LINEARFORCEUNIT", (("KIP", 1), ("INCH", -1))),
     ("KLF", "LINEARFORCEUNIT", (("KIP", 1), ("FT", -1))),
-    ("LB_IN", "TORQUEUNIT", (("LB", 1), ("INCH", 1))),
-    ("LB_FT", "TORQUEUNIT", (("LB", 1), ("FT", 1))),
-    ("KIP_IN", "TORQUEUNIT", (("KIP", 1), ("INCH", 1))),
-    ("KIP_FT", "TORQUEUNIT", (("KIP", 1), ("FT", 1)))
+    ("LBINCH/INCH", "LINEARMOMENTUNIT", (("LB", 1), ("INCH", 1), ("INCH", -1))),
+    ("LB/INCH (LS)", "LINEARSTIFFNESSUNIT", (("LB", 1), ("INCH", -1))),
+    ("LBMASS/INCH^3", "MASSDENSITYUNIT", (("LBMASS", 1), ("INCH", -3))),
+    ("LBMASS/INCH", "MASSPERLENGTHUNIT", (("LBMASS", 1), ("INCH", -1))),
+    ("LB/INCH^2 (E)", "MODULUSOFELASTICITYUNIT", (("LB", 1), ("INCH", -3))),
+    ("INCH^4 (I)", "MOMENTOFINERTIAUNIT", (("INCH", 4),)),
+    ("PSI (PF)", "PLANARFORCEUNIT", (("LB", 1), ("INCH", -2))),
+    ("LBMASS/INCH^2", "ROTATIONALMASSUNIT", (("LBMASS", 1), ("INCH", 2))),
+    ("LB*INCH/RADIAN", "ROTATIONALSTIFFNESSUNIT", (("LB", 1), ("INCH", 1), ("RADIAN", -1))),
+    ("INCH^5", "SECTIONAREAINTEGRALUNIT", (("INCH", 5),)),
+    ("INCH^3 (S)", "SECTIONMODULUSUNIT", (("INCH", 3),)),
+    ("LB/INCH^2 (G)", "SHEARMODULUSUNIT", (("LB", 1), ("INCH", -2))),
+    ("LBIN", "TORQUEUNIT", (("LB", 1), ("INCH", 1))),
+    ("LBFT", "TORQUEUNIT", (("LB", 1), ("FT", 1))),
+    ("KIPIN", "TORQUEUNIT", (("KIP", 1), ("INCH", 1))),
+    ("KIPFT", "TORQUEUNIT", (("KIP", 1), ("FT", 1)))
 ]
 
 for new_unit in derived_unit_list:
@@ -113,7 +126,28 @@ for new_unit in derived_unit_list:
     ifc_unit.update({new_unit[0]: unit})
 
 ## Set default units
-default_unit_names = ["INCH", "LB"]
+default_unit_names = [
+    "INCH",
+    "INCH^2",
+    "INCH^3",
+    "LBMASS",
+    "LB",
+    "PSI",
+    "PLI",
+    "LBINCH/INCH",
+    "LB/INCH (LS)",
+    "LBMASS/INCH^3",
+    "LBMASS/INCH",
+    "LB/INCH^2 (E)",
+    "INCH^4 (I)",
+    "PSI (PF)",
+    "LBMASS/INCH^2",
+    "LB*INCH/RADIAN",
+    "INCH^5",
+    "INCH^3 (S)",
+    "LB/INCH^2 (G)",
+    "LBIN"
+]
 
 default_units = []
 for unit in default_unit_names:
