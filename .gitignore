@@ -1,15 +1,16 @@
-# Ignore kate files
+# kate files
 .kateproject
 *.kate-swp
 
-# Ignore python binary files
+# python binary files
 *.ipynb
+.ipynb*
 *.pkl
 
-# Ignore RAM-Elements binary files
+# RAM-Elements binary files
 *.bak
 *.fem
 *.retx
 
-# Ignore EnerCalc files
+# EnerCalc files
 *.ec6
