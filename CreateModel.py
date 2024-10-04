@@ -244,6 +244,8 @@ ifcAggregate.assign_object(
     products=ifc_storeys)
 
 
+
+
 # Write model to file
 model.write("C:\\Users\\JoeBears\\git\\IFC-Structural-Toolkit\\TestModel.ifc")
 
