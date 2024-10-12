@@ -1,6 +1,8 @@
 # +
 from typing import Optional
 
+from rich import print
+
 import ifcopenshell
 import ifcopenshell.api.aggregate
 import ifcopenshell.api.context
@@ -12,14 +14,47 @@ import ifcopenshell.api.unit
 
 # -
 
-class file:
-    def __init__(self, ifcopenshell_file):
-        self.file = ifcopenshell_file
+def add_derived_unit(ifcopenshell_file,
+                     name: str,
+                     unit_type: str,
+                     elements: tuple):
+    """Add a derived unit to the IFC file"""
+    
 
-    def add_unit(self, name, unit_type, )
 
-    def write(self, filename: str):
-        self.file.write(filename)
+# +
+def get_units(file):
+    """Returns a dictionary of units in the ifcopenshell.file object."""
+    existing_units = {}
+    for unit in file.by_type("IfcSIUnit"):
+        if unit[2]:
+            existing_units.update({unit[2]+unit[3]: unit})
+        else:
+            existing_units.update({unit[3]: unit})
+    for unit in file.by_type("IfcConversionBasedUnit"):
+        existing_units.update({unit[2]: unit})
+    for unit in file.by_type("IfcDerivedUnit"):
+        existing_units.update({unit[3]: unit})
+    return existing_units
+
+def add_si_unit(self, name: str, unit_type: str, prefix: str = ""):
+    """Add a SI unit to the ifcopenshell.file object."""
+    existing_units = self.get_units()
+    if not existing_units.get(prefix+name, None):
+        if not prefix:
+            prefix = None
+        self.file.create_entity("IfcSIUnit",
+                                UnitType=unit_type,
+                                Prefix=prefix,
+                                Name=name)
+
+def add_conversion_based_unit(self, name: str,
+                              unit_type: str,
+                              exponents: tuple,
+                              conversion: float,
+                              base: str):
+    """Add a conversion based unit to the file"""
+#    existing_units = 
 
 
 # +
@@ -40,9 +75,4 @@ def open(filename: str):
 
 model = ifcopenshell.open("TestModel.ifc")
 
-si_units = model.by_type("IfcSIUnit")
-print(si_units[0][3])
-
-model.create_entity("IfcSIUnit", "AREAUNIT", "SQUARE_METRE")
-
-
+print(get_units(model))
