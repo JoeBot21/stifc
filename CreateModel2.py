@@ -1,5 +1,6 @@
 import ifcopenshell.api.project
 import ifcopenshell.api.root
+import ifcopenshell.api.unit
 from rich import print
 
 import units
@@ -78,6 +79,6 @@ unit_assignment_list = [
     ifc_units["LB/INCH^2 (SHEARMODULUS)"]
 ]
 
-model.create_entity("IfcUnitAssignment", unit_assignment_list)
+ifcopenshell.api.unit.assign_unit(model, unit_assignment_list)
 
 model.write("/home/joebot/git/stifc/AnnexE.ifc")
