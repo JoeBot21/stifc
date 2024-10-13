@@ -1,35 +1,3 @@
-# +
-from typing import Optional
-
-from rich import print
-
-import ifcopenshell
-import ifcopenshell.api.aggregate
-import ifcopenshell.api.context
-import ifcopenshell.api.project as ifcProject
-import ifcopenshell.api.pset
-import ifcopenshell.api.root
-import ifcopenshell.api.unit
-
-import units
-# -
-
-model = ifcProject.create_file("IFC4X3")
-project = ifcopenshell.api.root.create_entity(model,
-                                              "IfcProject",
-                                              name="00001-TestProject")
-
-add_conversion_based_unit(model,
-                          "YARD",
-                          "LENGTHUNIT",
-                          (1, 0, 0, 0, 0, 0, 0),
-                          0.914,
-                          "METRE")
-
-print(get_units(model))
-
-
-# +
 def get_units(file):
     """Returns a dictionary of units in the ifcopenshell.file object."""
     existing_units = {}
