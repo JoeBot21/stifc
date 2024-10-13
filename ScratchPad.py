@@ -12,6 +12,20 @@ import ifcopenshell.api.root
 import ifcopenshell.api.unit
 
 
+# +
+def initailize_project(name: str, schema: str = "IFC4"):
+    ifcopenshell_file = ifcopenshell.api.project.create_file(schema)
+    ifcopenshell.api.root.create_entity(
+        ifcopenshell_file,
+        ifc_class="IfcProject",
+        name=name)
+    return file(ifcopenshell_file)
+
+def open(filename: str):
+    ifcopenshell_file = ifcopenshell.open(filename)
+    return file(ifcopenshell_file)
+
+
 # -
 
 def add_derived_unit(ifcopenshell_file,
@@ -37,42 +51,68 @@ def get_units(file):
         existing_units.update({unit[3]: unit})
     return existing_units
 
-def add_si_unit(self, name: str, unit_type: str, prefix: str = ""):
+def find_dimensional_exponents(file, exponents: tuple):
+    """Searches the file for a dimensional exponents entry that matches
+       the provided dimensional exponents and returns an existing entry
+       or creates and returns a new dimensional exponents entry."""
+    exponents_list = []
+    ifc_exponents_list = file.by_type("IfcDimensionalExponents")
+    for existing_exponents in ifc_exponents_list:
+        exponents_list.append((existing_exponents[0],
+                               existing_exponents[1],
+                               existing_exponents[2],
+                               existing_exponents[3],
+                               existing_exponents[4],
+                               existing_exponents[5],
+                               existing_exponents[6]))
+    for i in range(0, len(exponents_list)):
+        if exponents == exponents_list[i]:
+            return ifc_exponents_list[i]
+    return file.create_entity("IfcDimensionalExponents", *exponents)
+
+def add_si_unit(file, name: str, unit_type: str, prefix: str = ""):
     """Add a SI unit to the ifcopenshell.file object."""
-    existing_units = self.get_units()
-    if not existing_units.get(prefix+name, None):
+    if not get_units(file).get(prefix+name, None):
         if not prefix:
             prefix = None
-        self.file.create_entity("IfcSIUnit",
-                                UnitType=unit_type,
-                                Prefix=prefix,
-                                Name=name)
+        file.create_entity("IfcSIUnit",
+                            UnitType=unit_type,
+                            Prefix=prefix,
+                            Name=name)
 
-def add_conversion_based_unit(self, name: str,
+def add_conversion_based_unit(file,
+                              name: str,
                               unit_type: str,
                               exponents: tuple,
                               conversion: float,
                               base: str):
     """Add a conversion based unit to the file"""
-#    existing_units = 
-
-
-# +
-def initailize_project(name: str, schema: str = "IFC4"):
-    ifcopenshell_file = ifcopenshell.api.project.create_file(schema)
-    ifcopenshell.api.root.create_entity(
-        ifcopenshell_file,
-        ifc_class="IfcProject",
-        name=name)
-    return file(ifcopenshell_file)
-
-def open(filename: str):
-    ifcopenshell_file = ifcopenshell.open(filename)
-    return file(ifcopenshell_file)
+#    if not get_units(file).get(name, None):
+#        exponents = 
 
 
 # -
 
 model = ifcopenshell.open("TestModel.ifc")
+
+test_exponents = (4, 0, 0, 0, 0, 0, 0)
+print(find_dimensional_exponents(model, test_exponents))
+
+# +
+exponents_list = []
+for exponents in model.by_type("IfcDimensionalExponents"):
+    current_exponents = (exponents[0],
+                         exponents[1],
+                         exponents[2],
+                         exponents[3],
+                         exponents[4],
+                         exponents[5],
+                         exponents[6])
+    exponents_list.append(current_exponents)
+
+print(exponents_list)
+# -
+
+print(model.by_type("IfcDimensionalExponents"))
 
 print(get_units(model))
