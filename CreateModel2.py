@@ -1,3 +1,4 @@
+import ifcopenshell.api.context
 import ifcopenshell.api.project
 import ifcopenshell.api.root
 import ifcopenshell.api.unit
@@ -10,6 +11,7 @@ project = ifcopenshell.api.root.create_entity(model,
                                               "IfcProject",
                                               name="00001-TestProject")
 
+# Add units
 si_units = [
     ["METRE", "LENGTHUNIT"],
     ["SQUARE_METRE", "AREAUNIT"],
@@ -55,30 +57,35 @@ derived_units = [
 for unit in derived_units:
     units.add_derived_unit(model, *unit)
 
+unit_assignment_list = ["INCH", "LB", "INCH^2", "LBM", "DEGREE",
+    "LB/INCH^2 (PRESSURE)", "INCH^3", "PLI", "LBINCH/INCH",
+    "LB/INCH (LINEARSTIFFNESS)", "LBM/INCH^3 (MASSDENSITY)",
+    "LBM/INCH (MASSPERLENGTH)", "LB/INCH^2 (MODULUSOFELASTICITY)",
+    "INCH^4 (MOMENTOFINERTIA)", "PSI", "LBM/INCH^2 (ROTATIONALMASS)",
+    "LBINCH/DEGREE (ROTATIONALSTIFFNESS)", "INCH^5 (SECTIONAREAINTEGRAL)",
+    "INCH^3 (SECTIONMODULUS)", "LB/INCH^2 (SHEARMODULUS)"]
 ifc_units = units.get_units(model)
-unit_assignment_list = [
-    ifc_units["INCH"],
-    ifc_units["LB"],
-    ifc_units["INCH^2"],
-    ifc_units["LBM"],
-    ifc_units["DEGREE"],
-    ifc_units["LB/INCH^2 (PRESSURE)"],
-    ifc_units["INCH^3"],
-    ifc_units["PLI"],
-    ifc_units["LBINCH/INCH"],
-    ifc_units["LB/INCH (LINEARSTIFFNESS)"],
-    ifc_units["LBM/INCH^3 (MASSDENSITY)"],
-    ifc_units["LBM/INCH (MASSPERLENGTH)"],
-    ifc_units["LB/INCH^2 (MODULUSOFELASTICITY)"],
-    ifc_units["INCH^4 (MOMENTOFINERTIA)"],
-    ifc_units["PSI"],
-    ifc_units["LBM/INCH^2 (ROTATIONALMASS)"],
-    ifc_units["LBINCH/DEGREE (ROTATIONALSTIFFNESS)"],
-    ifc_units["INCH^5 (SECTIONAREAINTEGRAL)"],
-    ifc_units["INCH^3 (SECTIONMODULUS)"],
-    ifc_units["LB/INCH^2 (SHEARMODULUS)"]
+ifc_unit_assignment_list = [ifc_units[name] for name in unit_assignment_list]
+ifcopenshell.api.unit.assign_unit(model, ifc_unit_assignment_list)
+
+# Add contexts
+model_parent = ifcopenshell.api.context.add_context(model, "Model")
+plan_parent = ifcopenshell.api.context.add_context(model, "Plan")
+
+subcontexts_list = [
+    (model, "Model", "Body", "MODEL_VIEW", model_parent),
+    (model, "Model", "Axis", "GRAPH_VIEW", model_parent),
+    (model, "Model", "Box", "MODEL_VIEW", model_parent),
+    (model, "Plan", "Body", "PLAN_VIEW", plan_parent),
+    (model, "Plan", "Axis", "GRAPH_VIEW", plan_parent),
+    (model, "Plan", "Annotation", "PLAN_VIEW", plan_parent),
+    (model, "Plan", "Annotation", "ELEVATION_VIEW", plan_parent),
+    (model, "Plan", "Annotation", "SECTION_VIEW", plan_parent)
 ]
 
-ifcopenshell.api.unit.assign_unit(model, unit_assignment_list)
+ifc_subcontexts = {}
+for new_subcontext in subcontexts_list:
+    ifcopenshell.api.context.add_context(*new_subcontext)
 
-model.write("/home/joebot/git/stifc/AnnexE.ifc")
+# Write model
+model.write("C:/Users/JoeBears/git/stifc/AnnexE.ifc")

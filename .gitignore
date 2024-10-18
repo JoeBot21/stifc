@@ -6,6 +6,7 @@
 *.ipynb
 .ipynb*
 *.pkl
+*.pyc
 
 # RAM-Elements binary files
 *.bak
