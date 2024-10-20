@@ -17,7 +17,7 @@ analysis_model = StructuralModel(
     Description="Main 3D analysis model",
     PredefinedType="LOADING_3D")
 
-model.write("C:/Users/JoeBears/git/stifc/models/AnnexE1.ifc")
+model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
 
 analysis_model = model.create_entity(
     type="IfcStructuralAnalysisModel",

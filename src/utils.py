@@ -1,3 +1,27 @@
+def create_placement(file,
+                     location: tuple,
+                     direction: tuple,
+                     axis: tuple = None,
+                     placement_rel_to=None):
+    """Create a 2D or 3D placement object."""
+    location = file.create_entity("IfcCartesianPoint", location)
+    ref_direction = file.create_entity("IfcDirection", direction)
+    if axis:
+        relative_placement = file.create_entity(
+            "IfcAxis2Placement2D",
+            Location=location,
+            RefDirection=file.create_entity("IfcDirection", direction))
+    else:
+        relative_placement = file.create_entity(
+            "IfcAxis2Placement3D",
+            Location=location,
+            Axis=file.create_entity("IfcDirection", axis),
+            RefDirection=ref_direction)
+    placement = file.create_entity(
+        "IfcLocalPlacement",
+        PlacementRelTo=placement_rel_to,
+        RelativePlacement=relative_placement)
+    return placement
 
 
 def reference_existing(file, kind: str, *args, **kwargs):
