@@ -3,6 +3,8 @@ from rich import print
 
 import ifcopenshell
 import ifcopenshell.guid
+
+from utils import *
 # -
 
 model = ifcopenshell.open("AnnexE.ifc")
@@ -55,4 +57,58 @@ analysis_model = model.create_entity(
     HasResults=(load_case_results,),
     SharedPlacement=origin_placement)
 
-model.write("C:/Users/JoeBears/git/stifc/AnnexE1.ifc")
+model.create_entity(
+    type="IfcRelDeclares",
+    GlobalId=ifcopenshell.guid.new(),
+    Name="AnalysisModelRelation",
+    Description="description text",
+    RelatingContext=model.by_type("IfcProject")[0],
+    RelatedDefinitions=(analysis_model,))
+
+# # Add structural member
+
+point_1 = create_nonrooted(
+    model,
+    "IfcVertexPoint",
+    create_nonrooted(model, "IfcCartesianPoint", (0.0, 0.0, 0.0)))
+point_2 = create_nonrooted(
+    model,
+    "IfcVertexPoint",
+    create_nonrooted(model, "IfcCartesianPoint", (0.0, 0.0, 120.0)))
+
+edge = create_nonrooted(
+    model,
+    "IfcEdge",
+    point_1,
+    point_2)
+
+model_context = model.by_id(73)
+print(model_context)
+
+topology_representation = create_nonrooted(
+    model,
+    "IfcTopologyRepresentation",
+    ContextOfItems=model_context,
+    RepresentationIdentifier="Reference",
+    RepresentationType="Edge",
+    Items=(edge,))
+
+definition_shape = create_nonrooted(
+    model,
+    "IfcProductDefinitionShape",
+    Name="DefinitionShapeName",
+    Description="description text",
+    Representation=(topology_representation,))
+
+direction = create_nonrooted(model, "IfcDirection", (1.0, 0.0, 0.0))
+
+model.create_entity(
+    type="IfcStructuralCurveMember",
+    GlobalId=ifcopenshell.guid.new(),
+    Name="LeftColumn",
+    Description="description text",
+    Representation=definition_shape,
+    PredefinedType="RIGID_JOINED_MEMBER",
+    Axis=direction)
+
+model.write("/home/joebot/git/stifc/AnnexE1.ifc")
