@@ -19,13 +19,7 @@ def find_dimensional_exponents(file, exponents: tuple):
     exponents_list = []
     ifc_exponents_list = file.by_type("IfcDimensionalExponents")
     for existing_exponents in ifc_exponents_list:
-        exponents_list.append((existing_exponents[0],
-                               existing_exponents[1],
-                               existing_exponents[2],
-                               existing_exponents[3],
-                               existing_exponents[4],
-                               existing_exponents[5],
-                               existing_exponents[6]))
+        exponents_list.append(tuple([x for x in existing_exponents]))
     for i in range(0, len(exponents_list)):
         if exponents == exponents_list[i]:
             return ifc_exponents_list[i]

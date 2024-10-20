@@ -3,6 +3,8 @@ from rich import print
 
 import ifcopenshell
 import ifcopenshell.guid
+
+from utils import *
 # -
 
 model = ifcopenshell.open("AnnexE.ifc")
@@ -55,4 +57,17 @@ analysis_model = model.create_entity(
     HasResults=(load_case_results,),
     SharedPlacement=origin_placement)
 
-model.write("C:/Users/JoeBears/git/stifc/AnnexE1.ifc")
+model.create_entity(
+    type="IfcRelDeclares",
+    GlobalId=ifcopenshell.guid.new(),
+    Name="AnalysisModelRelation",
+    Description="description text",
+    RelatingContext=model.by_type("IfcProject")[0],
+    RelatedDefinitions=(analysis_model,))
+
+# # Add structural member
+
+
+
+# +
+#model.write("C:/Users/JoeBears/git/stifc/AnnexE1.ifc")
