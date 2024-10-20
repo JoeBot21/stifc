@@ -1,9 +1,10 @@
 
 
-def create_nonrooted(file, kind: str, *args, **kwargs):
+def reference_existing(file, kind: str, *args, **kwargs):
     """Searches for an instance of kind with the given values and
        and returns it. If an existing instance cannot be found a new
-       one is created."""
+       one is created. This is to make it easier to 'reuse' non-rooted
+       entities."""
     ifc_list = file.by_type(kind)
     if not ifc_list:
         return file.create_entity(kind, *args, **kwargs)
