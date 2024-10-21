@@ -17,18 +17,13 @@ analysis_model = StructuralModel(
     Description="Main 3D analysis model",
     PredefinedType="LOADING_3D")
 
-model.write("C:/Users/JoeBears/git/stifc/models/AnnexE1.ifc")
+analysis_model.add_load_case(
+    "VARIABLE_Q",
+    "LIVE_LOAD_Q",
+    Name="TestCase",
+    Description="Load case for testing")
 
-analysis_model = model.create_entity(
-    type="IfcStructuralAnalysisModel",
-    GlobalId=ifcopenshell.guid.new(),
-    Name="AnalysisModel",
-    Description="description text",
-    PredefinedType="LOADING_3D",
-    OrientationOf2DPlane=origin,
-    LoadedBy=(load_case,),
-    HasResults=(load_case_results,),
-    SharedPlacement=origin_placement)
+model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
 
 # # Add load case
 # The IFC standard has an IfcStructuralLoadCase store information about
