@@ -15,6 +15,10 @@ class StructuralModel:
                  axis: tuple = (1.0, 0.0, 0.0),
                  placement_rel_to = None,
                  **kwargs):
+        """Creates the IfcStructuralAnalysisModel, relates it to the
+           provided project, and create an instance of
+           IfcRelAssignsToGroup to place elements of the structural
+           model in."""
         self.file = file
         kwargs.update({"GlobalId": ifcopenshell.guid.new()})
         kwargs.update({"LoadedBy": ()})
@@ -48,6 +52,9 @@ class StructuralModel:
                       ActionType: str,
                       ActionSource: str,
                       **kwargs):
+        """Creates an instance of IfcStructuralLoadCase with an
+           associated instance of IfcStructuralResultGroup and adds
+           them to the structural model."""
         # Add load case
         IfcStructuralLoadCase = self.file.create_entity(
             "IfcStructuralLoadCase",
@@ -85,3 +92,13 @@ class StructuralModel:
                 (IfcStructuralResultGroup,)
         return IfcStructuralLoadCase
 
+
+    def add_node(self,
+                 location: tuple,
+                 **kwargs):
+        """Adds a node (IfcStructuralPointConnection) to the analysis
+           model."""
+        IfcBoundaryNodeCondition = self.file.create_entity(
+            "IfcBoundaryNodeCondition",
+            kwargs.get("fixity_name", None),
+            self.file.create_entity("IfcBoolean
