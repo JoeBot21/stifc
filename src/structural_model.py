@@ -15,48 +15,51 @@ class StructuralModel:
                  axis: tuple = (1.0, 0.0, 0.0),
                  placement_rel_to = None,
                  **kwargs):
-        """Create the stifc StructuralModel object.
+        """Creates the IfcStructuralAnalysisModel, relates it to the
+           provided project, and create an instance of
+           IfcRelAssignsToGroup to place elements of the structural
+           model in.
 
            Parameters
            ==========
-           
+
            file : ifcopenshell.file
                File to add the structural model to
-            
+
             project : IfcProject
                 IfcProject to relate the structural model up into
-            
+
             location : tuple, optional
                 Location of origin used when placing the structural
                 model. Defaults to the origin point referenced for
                 the placement or the global origin.
-            
+
             direction : tuple, optional
                 Direction of the x-axis of the structural model.
                 Defaults to the x-axis referenced for the placement or
                 the global x-axis.
-            
+
             axis : tuple, optional
                 Direction of the z-axis of the structural model.
                 Defaults to the z-axis referenced for the placement or
                 the global z-axis.
-            
+
             placement_rel_to : IfcAxis2Placement, optional
                 IfcAxis2Placement to reference when creating the new
                 placement. Defaults to the global coordinate system when
                 not defined.
-            
+
             Name : str, optional
                 Name to assign to the IfcStructuralAnalysisModel Name
                 field
-            
+
             Description : str, optional
                 Text to add to the IfcStructuralAnalysisModel
                 Description field
-            
+
             PredefinedType : str, optional
                 Loading type from IfcAnalysisModelTypeEnum
-            
+
             OrientationOf2DPlane : IfcAxis2Placement3D, optional
                 IFC 3D axis placement used to define the orientation of
                 the 2D plane in a 3D structural model."""
@@ -94,7 +97,7 @@ class StructuralModel:
                                          include_subtypes=False):
             if context.CoordinateSpaceDimension == 3:
                 self.context = context
-        
+
 
     def add_load_case(self,
                       ActionType: str,
@@ -102,22 +105,22 @@ class StructuralModel:
                       **kwargs):
         """Adds a load case and associated results group to the analysis
            model.
-           
+
            Parameters
            ==========
-           
+
            ActionType : str
                Type from IfcActionTypeEnum that defines the nature of
                the loading
-            
+
             ActionSource : str
                 Type from IfcActionSourceTypeEnum that defines the cause
                 of the loading
-            
+
             Name : str, optional
                 Name to assign to the IfcStructuralAnalysisModel Name
                 field
-            
+
             Description : str, optional
                 Text to add to the IfcStructuralAnalysisModel
                 Description field"""
@@ -157,17 +160,17 @@ class StructuralModel:
 
     def add_node(self, Coordinates: tuple, **kwargs):
         """Add a node to the structural analysis model.
-        
+
            Parameters
            ==========
-           
+
            location : tuple
                Location of the node
-            
+
             Name : str, optional
                 Name to assign to the IfcStructuralAnalysisModel Name
                 field
-            
+
             Description : str, optional
                 Text to add to the IfcStructuralAnalysisModel
                 Description field"""
@@ -207,6 +210,3 @@ class StructuralModel:
             "RelatedObjects",
             IfcStructuralPointConnection)
         return IfcStructuralPointConnection
-        
-            
-                 
