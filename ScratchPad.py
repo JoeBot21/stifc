@@ -36,6 +36,8 @@ for node in node_list:
     nodes.update({node[0]: analysis_model.add_node(node[1], Name=node[0])})
 # -
 
+getattr(analysis_model.IfcRelAssignsToGroup, "RelatedObjects")
+
 model.write("C:/Users/JoeBears/git/stifc/models/AnnexE1.ifc")
 #model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
 

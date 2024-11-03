@@ -1,3 +1,29 @@
+def append_to_internal_list(ifc_object, target_name: str, value):
+    """Adds the specified value to a list type ifcopenshell object
+       attribute. This is useful because it handles some of the
+       necessary type checking.
+       
+       Parameters
+       ==========
+       
+       ifc_object : ifcopenshell object
+           ifcopenshell object with the list to append the value to
+        
+        target_name : str
+            Name of the object property referencing the list to append
+            the value to
+        
+        value : any
+            Value to append"""
+    
+    target = list(getattr(ifc_object, target_name))
+    if target:
+        target.append(value)
+        setattr(ifc_object, target_name, target)
+    else:
+        setattr(ifc_object, target_name, (value,))
+
+
 def create_placement(file,
                      location: tuple,
                      direction: tuple,

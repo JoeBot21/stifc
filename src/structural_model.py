@@ -91,7 +91,7 @@ class StructuralModel:
         # Set default representation context to add elements to.
         # This currently just grabs the main 3D context.
         for context in self.file.by_type("IfcGeometricRepresentationContext",
-                                     include_subtypes=False):
+                                         include_subtypes=False):
             if context.CoordinateSpaceDimension == 3:
                 self.context = context
         
@@ -133,13 +133,12 @@ class StructuralModel:
             ActionSource=ActionSource,
             Coefficient=kwargs.get("Coefficient", 1.0),
             Purpose=kwargs.get("Purpose", None),
-            SelfWeightCoefficients=kwargs.get("SelfWeightCoefficients", (0.0, 0.0, 0.0)))
-        load_case_list = list(self.IfcStructuralAnalysisModel.LoadedBy)
-        if load_case_list:
-            load_case_list.append(IfcStructuralLoadCase)
-            self.IfcStructuralAnalysisModel.LoadedBy = tuple(load_case_list)
-        else:
-            self.IfcStructuralAnalysisModel.LoadedBy = (IfcStructuralLoadCase,)
+            SelfWeightCoefficients=kwargs.get("SelfWeightCoefficients",
+                                              (0.0, 0.0, 0.0)))
+        append_to_internal_list(
+            self.IfcStructuralAnalysisModel,
+            "LoadedBy",
+            IfcStructuralLoadCase)
         # Add load case result collector
         IfcStructuralResultGroup = self.file.create_entity(
             "IfcStructuralResultGroup",
@@ -149,12 +148,10 @@ class StructuralModel:
             TheoryType=kwargs.get("TheoryType", "FIRST_ORDER_THEORY"),
             ResultForLoadGroup=IfcStructuralLoadCase,
             IsLinear=kwargs.get("IsLinear", True))
-        results_list = list(self.IfcStructuralAnalysisModel.HasResults)
-        if results_list:
-            results_list.append(IfcStructuralResultGroup)
-            self.IfcStructuralAnalysisModel.HasResults = tuple(results_list)
-        else:
-            self.IfcStructuralAnalysisModel.HasResults = (IfcStructuralResultGroup,)
+        append_to_internal_list(
+            self.IfcStructuralAnalysisModel,
+            "HasResults",
+            IfcStructuralResultGroup)
         return IfcStructuralLoadCase
 
 
@@ -175,11 +172,9 @@ class StructuralModel:
                 Text to add to the IfcStructuralAnalysisModel
                 Description field"""
 
-        IfcCartesianPoint = self.file.create_entity(
-            "IfcCartesianPoint",
+        IfcCartesianPoint = self.file.create_entity("IfcCartesianPoint",
             Coordinates=Coordinates)
-        IfcVertexPoint = self.file.create_entity(
-            "IfcVertexPoint",
+        IfcVertexPoint = self.file.create_entity("IfcVertexPoint",
             VertexGeometry=IfcCartesianPoint)
         IfcTopologyRepresentation = self.file.create_entity(
             "IfcTopologyRepresentation",
@@ -192,30 +187,25 @@ class StructuralModel:
             Name=kwargs.get("Name", None),
             Description=kwargs.get("Description", None),
             Representations=(IfcTopologyRepresentation,))
-        IfcLocalPlacement = self.file.create_entity(
-            "IfcLocalPlacement",
-            RelativePlacement=self.file.create_entity(
-                "IfcAxis2Placement3D",
+        IfcLocalPlacement = self.file.create_entity("IfcLocalPlacement",
+            RelativePlacement=self.file.create_entity("IfcAxis2Placement3D",
                 Location=IfcCartesianPoint,
-                Axis=self.file.create_entity(
-                    "IfcDirection",
+                Axis=self.file.create_entity("IfcDirection",
                     (1.0, 0.0, 0.0)),
-                RefDirection=self.file.create_entity(
-                    "IfcDirection",
+                RefDirection=self.file.create_entity("IfcDirection",
                     (0.0, 0.0, 1.0))))
-        node = self.file.create_entity(
+        IfcStructuralPointConnection = self.file.create_entity(
             "IfcStructuralPointConnection",
             GlobalId=ifcopenshell.guid.new(),
             Name=kwargs.get("Name", None),
             Description=kwargs.get("Description", None),
             ObjectPlacement=IfcLocalPlacement,
             Representation=IfcProductDefinitionShape)
-        element_list = list(self.IfcRelAssignsToGroup.RelatedObjects)
-        if element_list:
-            element_list.append(node)
-            self.IfcRelAssignsToGroup.RelatedObjects = tuple(element_list)
-        else:
-            self.IfcRelAssignsToGroup.RelatedObjects = (node,)
+        # Add node to structural model assignment
+        append_to_internal_list(
+            self.IfcRelAssignsToGroup,
+            "RelatedObjects",
+            IfcStructuralPointConnection)
         return node
         
             
