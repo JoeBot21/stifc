@@ -23,6 +23,8 @@ analysis_model.add_load_case(
     Name="TestCase",
     Description="Load case for testing")
 
+print(vars(analysis_model))
+
 model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
 
 # # Add load case

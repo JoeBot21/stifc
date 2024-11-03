@@ -15,6 +15,52 @@ class StructuralModel:
                  axis: tuple = (1.0, 0.0, 0.0),
                  placement_rel_to = None,
                  **kwargs):
+        """Create the stifc StructuralModel object.
+
+           Parameters
+           ==========
+           
+           file : ifcopenshell.file
+               File to add the structural model to
+            
+            project : IfcProject
+                IfcProject to relate the structural model up into
+            
+            location : tuple, optional
+                Location of origin used when placing the structural
+                model. Defaults to the origin point referenced for
+                the placement or the global origin.
+            
+            direction : tuple, optional
+                Direction of the x-axis of the structural model.
+                Defaults to the x-axis referenced for the placement or
+                the global x-axis.
+            
+            axis : tuple, optional
+                Direction of the z-axis of the structural model.
+                Defaults to the z-axis referenced for the placement or
+                the global z-axis.
+            
+            placement_rel_to : IfcAxis2Placement, optional
+                IfcAxis2Placement to reference when creating the new
+                placement. Defaults to the global coordinate system when
+                not defined.
+            
+            Name : str, optional
+                Name to assign to the IfcStructuralAnalysisModel Name
+                field
+            
+            Description : str, optional
+                Text to add to the IfcStructuralAnalysisModel
+                Description field
+            
+            PredefinedType : str, optional
+                Loading type from IfcAnalysisModelTypeEnum
+            
+            OrientationOf2DPlane : IfcAxis2Placement3D, optional
+                IFC 3D axis placement used to define the orientation of
+                the 2D plane in a 3D structural model."""
+
         self.file = file
         kwargs.update({"GlobalId": ifcopenshell.guid.new()})
         kwargs.update({"LoadedBy": ()})
@@ -42,12 +88,40 @@ class StructuralModel:
             GlobalId=ifcopenshell.guid.new(),
             RelatedObjects=(),
             RelatingGroup=self.IfcStructuralAnalysisModel)
+        # Set default representation context to add elements to.
+        # This currently just grabs the main 3D context.
+        for context in model.by_type("IfcGeometricRepresentationContext",
+                                     include_subtypes=False):
+        if context.CoordinateSpaceDimension == 3:
+            self.context = context
         
 
     def add_load_case(self,
                       ActionType: str,
                       ActionSource: str,
                       **kwargs):
+        """Adds a load case and associated results group to the analysis
+           model.
+           
+           Parameters
+           ==========
+           
+           ActionType : str
+               Type from IfcActionTypeEnum that defines the nature of
+               the loading
+            
+            ActionSource : str
+                Type from IfcActionSourceTypeEnum that defines the cause
+                of the loading
+            
+            Name : str, optional
+                Name to assign to the IfcStructuralAnalysisModel Name
+                field
+            
+            Description : str, optional
+                Text to add to the IfcStructuralAnalysisModel
+                Description field"""
+
         # Add load case
         IfcStructuralLoadCase = self.file.create_entity(
             "IfcStructuralLoadCase",
@@ -85,3 +159,13 @@ class StructuralModel:
                 (IfcStructuralResultGroup,)
         return IfcStructuralLoadCase
 
+
+    def add_node(self, location: tuple, **kwargs):
+        vertex = self.file.create_entity(
+            "IfcVertexPoint",
+            self.file.create_entity("IfcCartesianPoint", location))
+        representation = self.file.create_entity(
+            "IfcTopologyRepresentation",
+            self.context,
+            
+                 

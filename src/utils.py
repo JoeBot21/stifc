@@ -3,7 +3,30 @@ def create_placement(file,
                      direction: tuple,
                      axis: tuple = None,
                      placement_rel_to=None):
-    """Create a 2D or 3D placement object."""
+    """Create a 2D or 3D placement object.
+    
+       Parameters
+       ==========
+       
+       file : ifcopenshell.file
+           File to add the unit to
+        
+        location : tuple
+            Origin point of the placement object
+        
+        direction : tuple
+            Tuple to define the direction of the local x-axis
+        
+        axis : tuple, optional
+            Tuple to define the direction of the local z-axis. If this
+            is defined a 3D placement is created, otherwise a 2D
+            placement is created.
+        
+        placement_rel_to : IfcAxis2Placement, optional
+            IfcAxis2Placement to reference when creating the new
+            placement. Defaults to the global coordinate system when
+            not defined."""
+    
     location = file.create_entity("IfcCartesianPoint", location)
     ref_direction = file.create_entity("IfcDirection", direction)
     if axis:
@@ -28,7 +51,7 @@ def reference_existing(file, kind: str, *args, **kwargs):
     """Searches for an instance of kind with the given values and
        and returns it. If an existing instance cannot be found a new
        one is created. This is to make it easier to 'reuse' non-rooted
-       entities."""
+       entities. Arguments are similar to file.create_entity."""
     ifc_list = file.by_type(kind)
     if not ifc_list:
         return file.create_entity(kind, *args, **kwargs)

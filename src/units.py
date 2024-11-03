@@ -15,7 +15,8 @@ def get_units(file):
 def find_dimensional_exponents(file, exponents: tuple):
     """Searches the file for a dimensional exponents entry that matches
        the provided dimensional exponents and returns an existing entry
-       or creates and returns a new dimensional exponents entry."""
+       or creates and returns a new dimensional exponents entry. This
+       may be replaced by utils.reference_existing in the future."""
     exponents_list = []
     ifc_exponents_list = file.by_type("IfcDimensionalExponents")
     for existing_exponents in ifc_exponents_list:
@@ -26,7 +27,25 @@ def find_dimensional_exponents(file, exponents: tuple):
     return file.create_entity("IfcDimensionalExponents", *exponents)
 
 def add_si_unit(file, name: str, unit_type: str, prefix: str = ""):
-    """Add a SI unit to the ifcopenshell.file object."""
+    """Add a SI unit to the ifcopenshell.file object. IFC uses SI units
+       by default and all conversion based and derived units ultimately
+       reference the SI units.
+    
+       Parameters
+       ==========
+       
+       file : ifcopenshell.file
+           File to add the unit to
+        
+        name : str
+            Name to assign to the unit Name field
+        
+        unit_type : str
+            Type of unit. Should be an option from IfcUnitEnum.
+        
+        prefix : str, optional
+            Metric prefix to use if applicable"""
+
     if not get_units(file).get(prefix+name, None):
         if not prefix:
             prefix = None
@@ -41,7 +60,33 @@ def add_conversion_based_unit(file,
                               exponents: tuple,
                               conversion: float,
                               base: str):
-    """Add a conversion based unit to the file"""
+    """Add a conversion based unit to the ifcopenshell.file object.
+       Conversion based units are non-SI units that can be converted
+       directry back to a single previously defined SI unit.
+    
+       Parameters
+       ==========
+       
+       file : ifcopenshell.file
+           File to add the unit to
+        
+        name : str
+            Name to assign to the unit Name field
+        
+        unit_type : str
+            Type of unit. Should be an option from IfcUnitEnum.
+        
+        exponents : tuple
+            Values to use for the dimensional exponents. Defines the
+            dimensionality (length, mass, force, etc) of the unit.
+        
+        conversion : float
+            Value used to convert from the SI base unit to the
+            conversion based unit.
+        
+        base : str
+            Name of the SI base unit"""
+
     existing_units = get_units(file)
     if not existing_units.get(name, None):
         exponents = find_dimensional_exponents(file, exponents)
@@ -57,7 +102,25 @@ def add_conversion_based_unit(file,
                            ifc_measure_with)
 
 def add_derived_unit(file, name: str, unit_type: str, base_units: tuple):
-    """Add a derived unit to the file"""
+    """Add a derived unit to the ifcopenshell.file object. Derived
+       units are based on some combination of two or more previously
+       defined units.
+
+       Parameters
+       ==========
+
+       file : ifcopenshell.file
+           File to add the unit to
+        
+        name : str
+            Name to assign to the unit Name field
+        
+        unit_type : str
+            Type of unit. Should be an option from IfcUnitEnum.
+        
+        base_units : tuple
+            Tuple of tuples containing the units and their associated
+            exponents used to derive the new unit."""
     existing_units = get_units(file)
     if not existing_units.get(name, None):
         derived_element_list = []
