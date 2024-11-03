@@ -206,7 +206,7 @@ class StructuralModel:
             self.IfcRelAssignsToGroup,
             "RelatedObjects",
             IfcStructuralPointConnection)
-        return node
+        return IfcStructuralPointConnection
         
             
                  
