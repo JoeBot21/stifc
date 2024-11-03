@@ -23,9 +23,21 @@ analysis_model.add_load_case(
     Name="TestCase",
     Description="Load case for testing")
 
-print(vars(analysis_model))
+# +
+node_list = [
+    ("node_1", (0.0, 0.0, 0.0)),
+    ("node_2", (0.0, 0.0, 120.0)),
+    ("node_3", (192.0, 0.0, 0.0)),
+    ("node_4", (192.0, 0.0, 120.0))
+]
 
-model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
+nodes = {}
+for node in node_list:
+    nodes.update({node[0]: analysis_model.add_node(node[1], Name=node[0])})
+# -
+
+model.write("C:/Users/JoeBears/git/stifc/models/AnnexE1.ifc")
+#model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
 
 # # Add load case
 # The IFC standard has an IfcStructuralLoadCase store information about
