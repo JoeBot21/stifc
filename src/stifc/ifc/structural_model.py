@@ -1,6 +1,7 @@
 import ifcopenshell.guid
 
-from src.utils import *
+from stifc.ifc import ifc_utils
+from stifc import utils
 
 
 class StructuralModel:
@@ -65,10 +66,12 @@ class StructuralModel:
                 the 2D plane in a 3D structural model."""
 
         self.file = file
+        self.nodes = {}
+        self.members = {}
         kwargs.update({"GlobalId": ifcopenshell.guid.new()})
         kwargs.update({"LoadedBy": ()})
         kwargs.update({"HasResults": ()})
-        kwargs.update({"SharedPlacement": create_placement(
+        kwargs.update({"SharedPlacement": ifc_utils.create_placement(
             self.file,
             location=location,
             direction=direction,
@@ -138,7 +141,7 @@ class StructuralModel:
             Purpose=kwargs.get("Purpose", None),
             SelfWeightCoefficients=kwargs.get("SelfWeightCoefficients",
                                               (0.0, 0.0, 0.0)))
-        append_to_internal_list(
+        ifc_utils.append_to_internal_list(
             self.IfcStructuralAnalysisModel,
             "LoadedBy",
             IfcStructuralLoadCase)
@@ -151,7 +154,7 @@ class StructuralModel:
             TheoryType=kwargs.get("TheoryType", "FIRST_ORDER_THEORY"),
             ResultForLoadGroup=IfcStructuralLoadCase,
             IsLinear=kwargs.get("IsLinear", True))
-        append_to_internal_list(
+        ifc_utils.append_to_internal_list(
             self.IfcStructuralAnalysisModel,
             "HasResults",
             IfcStructuralResultGroup)
@@ -167,14 +170,17 @@ class StructuralModel:
            location : tuple
                Location of the node
 
-            Name : str, optional
-                Name to assign to the IfcStructuralAnalysisModel Name
-                field
+           Name : str, optional
+               Name to assign to the IfcStructuralAnalysisModel Name
+               field
 
-            Description : str, optional
-                Text to add to the IfcStructuralAnalysisModel
-                Description field"""
+           Description : str, optional
+               Text to add to the IfcStructuralAnalysisModel
+               Description field"""
 
+        name = kwargs.get("Name", None)
+        if not name:
+            name = utils.make_numbered_name(self.nodes.keys(), "node_")
         IfcCartesianPoint = self.file.create_entity("IfcCartesianPoint",
             Coordinates=Coordinates)
         IfcVertexPoint = self.file.create_entity("IfcVertexPoint",
@@ -205,7 +211,7 @@ class StructuralModel:
             ObjectPlacement=IfcLocalPlacement,
             Representation=IfcProductDefinitionShape)
         # Add node to structural model assignment
-        append_to_internal_list(
+        ifc_utils.append_to_internal_list(
             self.IfcRelAssignsToGroup,
             "RelatedObjects",
             IfcStructuralPointConnection)

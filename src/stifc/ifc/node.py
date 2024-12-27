@@ -1,4 +1,4 @@
-from src.utils import *
+from stifc.ifc.ifc_utils import *
 
 def set_node_fixities(file,
                       node,

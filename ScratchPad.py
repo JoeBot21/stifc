@@ -4,9 +4,9 @@ from rich import print
 import ifcopenshell
 import ifcopenshell.guid
 
-from src.utils import *
-from src.node import set_node_fixities
-from src.structural_model import StructuralModel
+from stifc.ifc.ifc_utils import *
+from stifc.ifc.node import set_node_fixities
+from stifc.ifc.structural_model import StructuralModel
 # -
 
 model = ifcopenshell.open("models/AnnexE.ifc")
@@ -42,8 +42,8 @@ for node in ["node_1", "node_3"]:
     set_node_fixities(model, nodes[node], True, True, True, True, True, True)
 # -
 
-model.write("C:/Users/JoeBears/git/stifc/models/AnnexE1.ifc")
-#model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
+# model.write("C:/Users/JoeBears/git/stifc/models/AnnexE1.ifc")
+model.write("/home/joebot/git/stifc/models/AnnexE1.ifc")
 
 # # Add structural member
 
@@ -91,5 +91,5 @@ model.create_entity(
     PredefinedType="RIGID_JOINED_MEMBER",
     Axis=direction)
 
-# +
 #model.write("C:/Users/JoeBears/git/stifc/AnnexE1.ifc")
+model.write("/home/joebot/git/stifc/AnnexE1.ifc")

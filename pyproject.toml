@@ -1,0 +1,53 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling", "hatch-vcs>=0.3", "setuptools-scm>=7.1"]
+
+[project]
+authors = [
+  {name = "Joe Bears", email = "joe.bears77@gmail.com"}
+]
+classifiers = [
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+dependencies = [
+  "ifcopenshell"
+]
+description = "Toolkit for using IFC in structural engineering"
+dynamic = ["version"]
+license = {text = "GPLv3"}
+name = "stifc"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+test = [
+  "pytest"
+]
+
+[project.scripts]
+stifc = "stifc.cli:cli"
+
+[project.urls]
+repository = "https://github.com/JoeBot21/stifc"
+
+[tool.distutils.bdist_wheel]
+universal = true
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/stifc/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src/stifc",
+  "/pyproject.toml"
+]
+
+[tool.hatch.version]
+source = "vcs"
