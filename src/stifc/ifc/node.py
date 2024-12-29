@@ -5,31 +5,31 @@ def set_node_fixities(file,
                       *args,
                       **kwargs):
     """Assign restraints to a node. By default nodes are unrestrained.
-    
+
        Parameters
        ==========
-       
+
        file : ifcopenshell.file
            File containing the node
-        
+
        node : IfcStructuralPointConnection
            Node to assing restraints to
-        
+
         TranslationalStiffnessX : bool, optional
             Restraint against translation along the x-axis
-        
+
         TranslationalStiffnessY : bool, optional
             Restraint against translation along the y-axis
-        
+
         TranslationalStiffnessZ : bool, optional
             Restraint against translation along the z-axis
-        
+
         RotationalStiffnessX : bool, optional
             Restraint against rotation about the x-axis
-        
+
         RotationalStiffnessY : bool, optional
             Restraint against rotation about the y-axis
-        
+
         RotationalStiffnessZ : bool, optional
             Restraint against rotation about the z-axis"""
 

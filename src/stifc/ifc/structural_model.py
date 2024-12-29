@@ -193,7 +193,7 @@ class StructuralModel:
             Items=(IfcVertexPoint,))
         IfcProductDefinitionShape = self.file.create_entity(
             "IfcProductDefinitionShape",
-            Name=kwargs.get("Name", None),
+            Name=name,
             Description=kwargs.get("Description", None),
             Representations=(IfcTopologyRepresentation,))
         IfcLocalPlacement = self.file.create_entity("IfcLocalPlacement",
@@ -206,7 +206,7 @@ class StructuralModel:
         IfcStructuralPointConnection = self.file.create_entity(
             "IfcStructuralPointConnection",
             GlobalId=ifcopenshell.guid.new(),
-            Name=kwargs.get("Name", None),
+            Name=name,
             Description=kwargs.get("Description", None),
             ObjectPlacement=IfcLocalPlacement,
             Representation=IfcProductDefinitionShape)
@@ -215,4 +215,5 @@ class StructuralModel:
             self.IfcRelAssignsToGroup,
             "RelatedObjects",
             IfcStructuralPointConnection)
+        self.nodes.update({name: IfcStructuralPointConnection})
         return IfcStructuralPointConnection

@@ -16,8 +16,9 @@ def append_to_internal_list(ifc_object, target_name: str, value):
         value : any
             Value to append"""
     
-    target = list(getattr(ifc_object, target_name))
+    target = getattr(ifc_object, target_name)
     if target:
+        target = list(target)
         target.append(value)
         setattr(ifc_object, target_name, target)
     else:
@@ -57,14 +58,14 @@ def create_placement(file,
     ref_direction = file.create_entity("IfcDirection", direction)
     if axis:
         relative_placement = file.create_entity(
-            "IfcAxis2Placement2D",
-            Location=location,
-            RefDirection=file.create_entity("IfcDirection", direction))
-    else:
-        relative_placement = file.create_entity(
             "IfcAxis2Placement3D",
             Location=location,
             Axis=file.create_entity("IfcDirection", axis),
+            RefDirection=ref_direction)
+    else:
+        relative_placement = file.create_entity(
+            "IfcAxis2Placement2D",
+            Location=location,
             RefDirection=ref_direction)
     placement = file.create_entity(
         "IfcLocalPlacement",
